@@ -57,7 +57,7 @@ Explanation 2:
  
 */
 
-public class Solution {
+public class GCD {
     public int gcd(int A, int B) {
         while(A>0) {
             int tmp = A;
