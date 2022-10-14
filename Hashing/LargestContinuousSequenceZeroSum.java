@@ -1,7 +1,8 @@
 package Hashing;
 
-import java.util.HashMap;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /*
 Problem Description
@@ -45,41 +46,60 @@ Example Explanation
 public class LargestContinuousSequenceZeroSum {
 	
 	public static void main(String[] args) {
-		System.out.println(Arrays.toString(lszero(new int[] {1,2,-2,4,-4})));
+		int[] arr = new int[] {1,2,-2,4,-4 };
+		ArrayList<Integer> A = new ArrayList<Integer>();
+		for (int value : arr) {
+		    A.add(value);
+		}
+		
+		System.out.println(lszero(A));
 	}
 	
-	 public static int[] lszero(int[] A) {
-		 HashMap<Integer,Integer> map =  new HashMap<Integer, Integer>();
-		 int pf[]=new int[A.length];
-		 pf[0]=A[0];
-		 for(int i=1;i<A.length; i++) {
-			 pf[i] =  A[i]+pf[i-1];
-		 }
-		 int maxLength=0;
-		 int i1=-1;
-		 int i2=-1;
-		 for(int i=0;i<A.length; i++) {
-			 if(map.containsKey(pf[i])) {
-				 int length = i-map.get(pf[i]);
-				 if(length > maxLength) {
-					 maxLength = length;
-					 i1=map.get(pf[i])+1;
-					 i2=i;
-				 }
-			 } 
-			 else if(pf[i]==0) {
-				 int length = i;
-				 if(length > maxLength) {
-					 maxLength = length;
-					 i1=0;
-					 i2=i;
-				 }
-			 }
-			 else {
-				 map.put(pf[i], i);
-			 }
-		 }
-		 
-		 return Arrays.copyOfRange(A, i1, i2+1);
-	 }
+	public static ArrayList<Integer> pfSumArray(ArrayList<Integer> A){
+        ArrayList<Integer> answer = new ArrayList<Integer>();
+        answer.add(A.get(0));
+        for(int i = 1 ; i < A.size() ;i++){
+            answer.add(answer.get(i-1)  + A.get(i));
+        }
+        return answer;
+    }	
+    public static ArrayList<Integer> lszero(ArrayList<Integer> A) {
+        ArrayList<Integer> pfSumArray = pfSumArray(A);
+        ArrayList<Integer> answer = new ArrayList<Integer>();
+        LinkedHashMap<Integer,ArrayList<Integer>> freqMap = new LinkedHashMap<Integer, ArrayList<Integer>>();
+         for(int i = 0 ; i < pfSumArray.size() ;i++){
+             if(freqMap.containsKey(pfSumArray.get(i))){
+                 ArrayList<Integer> temp = freqMap.get(pfSumArray.get(i));
+                 temp.add(i);
+                 freqMap.put(pfSumArray.get(i),temp);
+             }else{
+                 ArrayList<Integer> temp = new ArrayList<Integer>();
+                 temp.add(i);
+                 freqMap.put(pfSumArray.get(i),temp);
+             }
+         }
+        int maxLength = -1;
+        for(Map.Entry<Integer,ArrayList<Integer>> entrySet : freqMap.entrySet()){
+            ArrayList<Integer> current = entrySet.getValue();
+            if(entrySet.getKey() == 0){
+                int currentLength = current.get(current.size()-1)+1;
+                if(maxLength < currentLength){
+                    maxLength = currentLength;
+                    answer.clear();
+                    answer.addAll(A.subList(0,current.get(current.size()-1)+1));
+                }
+            }else if(current.size()>1){
+                int start = current.get(0);
+                int end = current.get(current.size()-1);
+                int currentLength = end - start;
+                if(currentLength > maxLength){
+                    maxLength = currentLength;
+                    answer.clear();
+                    answer.addAll(A.subList(start+1,end+1));
+                }
+            }
+            
+        }
+        return answer;
+    }
 }
