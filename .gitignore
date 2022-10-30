@@ -1,9 +1,6 @@
 /daily-ds-algo.iml
 /out/
-/.idea/misc.xml
-/.idea/.gitignore
-/.idea/modules.xml
-/.idea/vcs.xml
+/.idea/**
 /.classpath
 /.project
 **/**.class
